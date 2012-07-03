@@ -7,7 +7,8 @@
         "mongoose": "*",
         "async": "*",
         "serialport": "*",
-        "socket.io": "*"
+        "socket.io": "*",
+        "xdate": "*"
     },
     "engines": {
         "node": "0.8.x"
