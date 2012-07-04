@@ -72,7 +72,7 @@
         </div>
         <div class="span4">
             <h2>Verbrauch Monat</h2>
-            <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+            <p id="counterMonth"></p>
             <p><a class="btn" href="#">View details »</a></p>
         </div>
         <div class="span4">
@@ -114,6 +114,16 @@
     todayFunc();
 
     setTimeout(todayFunc, 5000);
+
+    var monthFunc = function () {
+        socket.emit('month', function (data) {
+            $('#counterMonth').text(data);
+        });
+    };
+
+    monthFunc();
+
+    setTimeout(monthFunc, 5000);
 
     // Load the Visualization API and the piechart package.
     google.load('visualization', '1.1', {'packages':['corechart']});

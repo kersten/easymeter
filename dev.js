@@ -42,16 +42,19 @@ function reduce(key, values) {
 Counter.findOne({
     type: 'summary',
     _id: {
-        $gt: Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).getTime()/1000).toString(16) + "0000000000000000"
+        $gt: Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).setDate(1).getTime()/1000).toString(16) + "0000000000000000"
     }
 }).limit(1).exec(function (err, docs) {
-    if (err) return;
-
-    Counter.findOne({
-        type: 'summary'
-    }).sort('_id', -1).limit(1).exec(function (err, last) {
         if (err) return;
 
-        console.log(last.get('counter') - docs.get('counter'));
+        Counter.findOne({
+            type: 'summary',
+            _id: {
+                $lt: Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).setDate((new xDate()).getFullYear(), (new xDate()).getMonth()).getTime()/1000).toString(16) + "0000000000000000"
+            }
+        }).sort('_id', -1).limit(1).exec(function (err, last) {
+                if (err) return;
+
+                console.log(Math.floor((last.get('counter') - docs.get('counter')) * 100) / 100);
+            });
     });
-});
