@@ -40,20 +40,22 @@ function reduce(key, values) {
 // $lt: Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).addDays(1).getTime()/1000).toString(16) + "0000000000000000"
 
 Counter.findOne({
-    type: 'summary'
-}).sort('_id', -1).limit(1).exec(function (err, docs) {
+    type: 'summary',
+    _id: {
+        $gt: Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).setDate(1).getTime()/1000).toString(16) + "0000000000000000"
+    }
+}).limit(1).exec(function (err, docs) {
         if (err) return;
 
         Counter.findOne({
             type: 'summary',
             _id: {
-                $gt: Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).setDate(1).setMonth(1).getTime()/1000).toString(16) + "0000000000000000"
+                $lt: Math.floor((new xDate()).setHours(23).setMinutes(59).setSeconds(59).setDate(xDate.getDaysInMonth((new xDate()).getFullYear(), (new xDate()).getMonth())).getTime()/1000).toString(16) + "0000000000000000"
             }
-        }).sort('_id', 1).limit(1).exec(function (err, last) {
-                console.log(arguments, (new xDate()).setHours(0).setMinutes(0).setSeconds(0).setDate(xDate.getDaysInMonth((new xDate()).getFullYear(), (new xDate()).getMonth())))
-
+        }).sort('_id', -1).limit(1).exec(function (err, last) {
+                console.log((new xDate()).setHours(23).setMinutes(59).setSeconds(59).setDate(xDate.getDaysInMonth((new xDate()).getFullYear(), (new xDate()).getMonth())));
                 if (err) return;
 
-                console.log({complete: Math.floor(docs.get('counter') * 100) / 100, year: Math.floor((last.get('counter') - docs.get('counter')) * 100) / 100});
+                console.log(Math.floor((last.get('counter') - docs.get('counter')) * 100) / 100);
             });
     });
