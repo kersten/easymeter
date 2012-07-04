@@ -13,7 +13,6 @@ var counter = new mongoose.Schema({
 var Counter = mongoose.model('Counter', counter);
 
 function map () {
-    console.log('TEST');
     var date = new xDate(this.id.getTimestamp()),
         hour = date.toString('dd.MM.yyyy HH'),
         stats = {};
@@ -22,33 +21,31 @@ function map () {
     emit(this.type, stats);
 }
 
-function reduce(hours, values) {
-    var n = {totalDuration : 0, num : 0};
-    for ( var i=0; i<values.length; i++ ){
-        n.totalDuration += values[i].totalDuration;
-        n.num += values[i].num;
+function reduce(key, values) {
+    var out = {};
+    function merge(a, b) {
+        for (var k in b) {
+            if (!b.hasOwnProperty(k)) {
+                continue;
+            }
+            a[k] = (a[k] || 0) + b[k];
+        }
     }
-    return n;
+    for (var i=0; i < values.length; i++) {
+        merge(out, values[i]);
+    }
+    return out;
 }
 
-mongoose.connection.db.executeDbCommand({
-    mapreduce: "counters", //the name of the collection we are map-reducing *note, this is the model Ping we defined above...mongoose automatically appends an 's' to the model name within mongoDB
-    query: { 'type' : 'moment' }, //I've included this as an example of how to query for parameters outside of the map-reduced variable
-    map: map, //a function we'll define next for mapping
-    reduce: reduce, //a function we'll define next for reducing
-    sort: {url: 1}, //let's sort descending...it makes the operation run faster
-    out: "avr" //the collection that will contain the map-reduce results *note, this must be a different collection than the map-reduce input
-}, function(err, dbres) {
-    console.log(arguments);
-});
+// $lt: Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).addDays(1).getTime()/1000).toString(16) + "0000000000000000"
 
+Counter.find({
+    type: 'summary',
+    _id: {
+        $gt: Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).getTime()/1000).toString(16) + "0000000000000000"
+    }
+}).limit(1).exec(function (err, docs) {
+        if (err) return;
 
-Counter.find({type: 'moment'}).sort('_id', -1).limit(30).exec(function (err, docs) {
-    if (err) return;
-
-    docs.forEach(function (doc) {
-        console.log(doc.get('_id').getTimestamp());
-    });
-
-    //process.exit();
+        console.log(docs, Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).getTime()/1000).toString(16) + "0000000000000000", Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).addDays(1).getTime()/1000).toString(16) + "0000000000000000");
 });
