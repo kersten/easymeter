@@ -109,21 +109,21 @@
         socket.emit('today', function (data) {
             $('#counterToday').text(data);
         });
+
+        setTimeout(todayFunc, 5000);
     };
 
     todayFunc();
-
-    setTimeout(todayFunc, 5000);
 
     var monthFunc = function () {
         socket.emit('month', function (data) {
             $('#counterMonth').text(data);
         });
+
+        setTimeout(monthFunc, 5000);
     };
 
     monthFunc();
-
-    setTimeout(monthFunc, 5000);
 
     // Load the Visualization API and the piechart package.
     google.load('visualization', '1.1', {'packages':['corechart']});
