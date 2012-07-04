@@ -39,13 +39,19 @@ function reduce(key, values) {
 
 // $lt: Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).addDays(1).getTime()/1000).toString(16) + "0000000000000000"
 
-Counter.find({
+Counter.findOne({
     type: 'summary',
     _id: {
         $gt: Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).getTime()/1000).toString(16) + "0000000000000000"
     }
 }).limit(1).exec(function (err, docs) {
+    if (err) return;
+
+    Counter.findOne({
+        type: 'summary'
+    }).sort('_id', -1).limit(1).exec(function (err, last) {
         if (err) return;
 
-        console.log(docs, Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).getTime()/1000).toString(16) + "0000000000000000", Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).addDays(1).getTime()/1000).toString(16) + "0000000000000000");
+        console.log(last.get('counter') - docs.get('counter'));
+    });
 });
