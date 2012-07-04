@@ -110,7 +110,7 @@
     var today = 0;
     var todayFunc = function () {
         socket.emit('today', function (data) {
-            $('#counterToday').text(data + ' kWh');
+            $('#counterToday').text(data + ' kWh (' + (Math.floor(0.2329*data * 100) / 100) + '€)');
             $('#counterTodayAverage').text((Math.floor((data / parseInt((new XDate()).toString("H"))) * 100) / 100) + ' kW pro Stunde');
         });
 
