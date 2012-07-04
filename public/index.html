@@ -121,7 +121,7 @@
 
     var monthFunc = function () {
         socket.emit('month', function (data) {
-            $('#counterMonth').text(data + ' kWh');
+            $('#counterMonth').text(data + ' kWh (' + (23.29*data) + '€)');
             $('#counterMonthAverage').text((Math.floor((data / parseInt((new XDate()).toString("d"))) * 100) / 100) + ' kW pro Tag');
         });
 
@@ -133,7 +133,7 @@
     var counterFunc = function () {
         socket.emit('complete', function (data) {
             $('#counterComplete').text(data.complete + ' kWh');
-            $('#counterCompleteYear').text(data.year + ' kWh dieses Jahr');
+            $('#counterCompleteYear').text(data.year + ' kWh dieses Jahr (' + (23.29*data.year) + '€)');
         });
 
         setTimeout(counterFunc, 5000);
