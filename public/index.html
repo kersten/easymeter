@@ -131,8 +131,8 @@
 
     var counterFunc = function () {
         socket.emit('complete', function (data) {
-            $('#counterComplete').text(data + ' kWh');
-            $('#counterCompleteYear').text((Math.floor((data / parseInt((new XDate()).toString("d"))) * 100) / 100) + ' kWh dieses Jahr');
+            $('#counterComplete').text(data.complete + ' kWh');
+            $('#counterCompleteYear').text(data.year + ' kWh dieses Jahr');
         });
 
         setTimeout(counterFunc, 5000);
