@@ -129,6 +129,17 @@
 
     monthFunc();
 
+    var counterFunc = function () {
+        socket.emit('complete', function (data) {
+            $('#counterComplete').text(data + ' kWh');
+            $('#counterCompleteYear').text((Math.floor((data / parseInt((new XDate()).toString("d"))) * 100) / 100) + ' kWh dieses Jahr');
+        });
+
+        setTimeout(counterFunc, 5000);
+    };
+
+    counterFunc();
+
     // Load the Visualization API and the piechart package.
     google.load('visualization', '1.1', {'packages':['corechart']});
 
