@@ -110,7 +110,7 @@
     var todayFunc = function () {
         socket.emit('today', function (data) {
             $('#counterToday').text(data + ' kWh');
-            $('#counterTodayAverage').text((Math.floor((data / parseInt((new XDate()).toString("H"))) * 100) / 100) + ' kWh pro Stunde');
+            $('#counterTodayAverage').text((Math.floor((data / parseInt((new XDate()).toString("H"))) * 100) / 100) + ' kW pro Stunde');
         });
 
         setTimeout(todayFunc, 5000);
@@ -121,7 +121,7 @@
     var monthFunc = function () {
         socket.emit('month', function (data) {
             $('#counterMonth').text(data + ' kWh');
-            $('#counterMonthAverage').text((Math.floor((data / parseInt((new XDate()).toString("d"))) * 100) / 100) + ' kWh pro Tag');
+            $('#counterMonthAverage').text((Math.floor((data / parseInt((new XDate()).toString("d"))) * 100) / 100) + ' kW pro Tag');
         });
 
         setTimeout(monthFunc, 5000);
