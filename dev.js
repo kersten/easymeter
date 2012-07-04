@@ -37,12 +37,14 @@ function reduce(key, values) {
     return out;
 }
 
-Counter.find({type: 'moment'}).sort('_id', -1).limit(30).exec(function (err, docs) {
-    if (err) return;
+Counter.find({
+    type: 'moment',
+    _id: {
+        $gt: Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).getTime()/1000).toString(16) + "0000000000000000",
+        $lt: Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).addDays(1).getTime()/1000).toString(16) + "0000000000000000"
+    }
+}).exec(function (err, docs) {
+        if (err) return;
 
-    docs.forEach(function (doc) {
-        console.log(doc.get('_id').getTimestamp());
-    });
-
-    process.exit();
+        console.log(docs, Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).getTime()/1000).toString(16) + "0000000000000000", Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).addDays(1).getTime()/1000).toString(16) + "0000000000000000");
 });

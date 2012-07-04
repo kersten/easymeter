@@ -25,12 +25,70 @@
 
     <!-- CSS : implied media="all" -->
     <link type="text/css" href="/css/bootstrap.min.css" rel="stylesheet" />
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+        }
+    </style>
 
     <!-- All JavaScript at the bottom, except for Modernizr which enables HTML5 elements & feature detects -->
     <script src="/js/libs/modernizr-2.5.3.min.js"></script>
 </head>
 <body>
-<div id="chart_div"></div>
+<div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </a>
+            <a class="brand" href="#">Project name</a>
+            <div class="nav-collapse">
+                <ul class="nav">
+                    <li class="active"><a href="#">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div><!--/.nav-collapse -->
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+    <!-- Main hero unit for a primary marketing message or call to action -->
+    <div class="hero-unit" style="padding: 0px;">
+        <div id="chart_div"></div>
+    </div>
+
+    <!-- Example row of columns -->
+    <div class="row">
+        <div class="span4">
+            <h2>Verbrauch Heute</h2>
+            <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+            <p><a class="btn" href="#">View details »</a></p>
+        </div>
+        <div class="span4">
+            <h2>Verbrauch Monat</h2>
+            <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+            <p><a class="btn" href="#">View details »</a></p>
+        </div>
+        <div class="span4">
+            <h2>Zählerstand</h2>
+            <p>Donec sed odio dui. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Vestibulum id ligula porta felis euismod semper. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.</p>
+            <p><a class="btn" href="#">View details »</a></p>
+        </div>
+    </div>
+
+    <hr>
+
+    <footer>
+        <p>© Company 2012</p>
+    </footer>
+
+</div>
 
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="/js/libs/jquery-1.7.1.min.js"><\/script>')</script>
@@ -46,6 +104,16 @@
 
     var socket = io.connect();
 
+    var today = 0;
+
+    socket.emit('today', function (data) {
+        console.log(data);
+
+        return;
+
+        today += data;
+    });
+
     // Load the Visualization API and the piechart package.
     google.load('visualization', '1.1', {'packages':['corechart']});
 
@@ -56,13 +124,22 @@
     // instantiates the pie chart, passes in the data and
     // draws it.
     var options = {
-        title: 'Verbrauch der letzten zwei Minuten',
-        width: 960,
-        height: 440,
+        title: 'Aktueller Stromverbrauch (maximal 2 Minuten)',
+        titleTextStyle: {color: 'black', fontSize: 30},
+        curveType: "function",
+        width: 940,
+        height: 290,
         animation: {
             duration: 1000,
-            easing: 'in'
-        }
+            easing: 'inAndOut'
+        },
+        backgroundColor: { fill: 'transparent' },
+        'vAxis.baseline': 0,
+        'vAxis.viewWindow.min': 0,
+        'vAxis.title': 'Watt',
+        legend: {position: 'none'},
+        chartArea: {width: '90%'},
+        vAxis: {textPosition: 'in'}
     };
 
     var chart;
@@ -76,6 +153,8 @@
         socket.on('data', function (rawData) {
             var date = new XDate(new Date(rawData.date));
             data.push([date.toString("HH:mm:ss"), rawData.counter]);
+
+           today += rawData.counter / 12;
 
             if (data.length >= 60) {
                 data.splice(1, 1);
