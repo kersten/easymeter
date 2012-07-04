@@ -68,11 +68,13 @@
         <div class="span4">
             <h2>Verbrauch Heute</h2>
             <p id="counterToday"></p>
+            <p id="counterTodayAverage"></p>
             <p><a class="btn" href="#">View details »</a></p>
         </div>
         <div class="span4">
             <h2>Verbrauch Monat</h2>
             <p id="counterMonth"></p>
+            <p id="counterMonthAverage"></p>
             <p><a class="btn" href="#">View details »</a></p>
         </div>
         <div class="span4">
@@ -107,7 +109,8 @@
     var today = 0;
     var todayFunc = function () {
         socket.emit('today', function (data) {
-            $('#counterToday').text(data);
+            $('#counterToday').text(data + ' kWh');
+            $('#counterTodayAverage').text((data / parseInt((new XDate()).toString("H"))) + ' kWh pro Stunde');
         });
 
         setTimeout(todayFunc, 5000);
@@ -117,7 +120,8 @@
 
     var monthFunc = function () {
         socket.emit('month', function (data) {
-            $('#counterMonth').text(data);
+            $('#counterMonth').text(data + ' kWh');
+            $('#counterMonthAverage').text((data / parseInt((new XDate()).toString("d"))) + ' kWh pro Tag');
         });
 
         setTimeout(monthFunc, 5000);
