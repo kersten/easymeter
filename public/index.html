@@ -70,18 +70,21 @@
             <h2>Verbrauch Heute</h2>
             <p id="counterToday"></p>
             <p id="counterTodayAverage"></p>
+            <p id="counterTodayCost"></p>
             <p><a class="btn" href="#">Tagesdaten »</a></p>
         </div>
         <div class="span4">
             <h2>Verbrauch Monat</h2>
             <p id="counterMonth"></p>
             <p id="counterMonthAverage"></p>
+            <p id="counterMonthCost"></p>
             <p><a class="btn" href="#">Monatsdaten »</a></p>
         </div>
         <div class="span4">
             <h2>Zählerstand</h2>
             <p id="counterComplete"></p>
             <p id="counterCompleteYear"></p>
+            <p id="counterCompleteYearCost"></p>
             <p><a class="btn" href="#">Jahresdaten »</a></p>
         </div>
     </div>
@@ -112,7 +115,8 @@
     var todayFunc = function () {
         socket.emit('today', function (data) {
             $('#counterToday').text(data + ' kWh (' + (Math.floor(0.2329*data * 100) / 100) + '€)');
-            $('#counterTodayAverage').text((Math.floor((data / parseInt((new XDate()).toString("H"))) * 100) / 100) + ' kW pro Stunde');
+            $('#counterTodayAverage').text((Math.floor((data / (parseInt((new XDate()).toString("H")) + 1)) * 100) / 100) + ' kW pro Stunde');
+            $('#counterTodayCost').text('Heute voraussichtlich ' + (Math.floor((0.2329*data / ((new XDate()).toString("H") + 1)) * 100 * 24) / 100) + '€ Kosten');
         });
 
         setTimeout(todayFunc, 5000);
@@ -124,6 +128,7 @@
         socket.emit('month', function (data) {
             $('#counterMonth').text(data + ' kWh (' + (Math.floor(0.2329*data * 100) / 100) + '€)');
             $('#counterMonthAverage').text((Math.floor((data / parseInt((new XDate()).toString("d"))) * 100) / 100) + ' kW pro Tag');
+            $('#counterMonthCost').text('Voraussichtlich ' + (Math.floor((0.2329*data / (new XDate()).getDate()) * 100 * XDate.getDaysInMonth((new XDate()).getFullYear(), (new XDate()).getMonth())) / 100) + '€ Kosten diesen Monat');
         });
 
         setTimeout(monthFunc, 5000);
@@ -135,6 +140,7 @@
         socket.emit('complete', function (data) {
             $('#counterComplete').text(data.complete + ' kWh');
             $('#counterCompleteYear').text(data.year + ' kWh dieses Jahr (' + (Math.floor(0.2329*data.year * 100) / 100) + '€)');
+            $('#counterCompleteYearCost').text('Voraussichtlich ' + (Math.floor((0.2329*data.year / (new XDate()).getMonth()) * 100 * 12) / 100) + '€ Kosten dieses Jahr');
         });
 
         setTimeout(counterFunc, 5000);
@@ -167,7 +173,9 @@
         'vAxis.title': 'Watt',
         legend: {position: 'none'},
         chartArea: {width: '90%'},
-        vAxis: {textPosition: 'in'}
+        vAxis: {textPosition: 'in', minValue: 0},
+        pointSize: 4,
+        series: { 0: {color: 'red'}  }
     };
 
     var chart;
