@@ -89,6 +89,22 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="span12">
+            <table class="table table-striped" id="connectedClients">
+                <thead>
+                <tr>
+                    <th>IP</th>
+                    <th>MAC</th>
+                    <th>Hostname</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
     <hr>
 
     <footer>
@@ -147,6 +163,18 @@
     };
 
     counterFunc();
+
+    var connectedClientsFunc = function () {
+        socket.emit('connectedClients', function (data) {
+            data.forEach(function (client) {
+                $('<tr><td>' + client.ip + '</td><td>' + client.mac + '</td><td>' + client.hostname + '</td></tr>').appendTo('#connectedClients tbody');
+            });
+        });
+
+        setTimeout(connectedClientsFunc, 5000);
+    };
+
+    connectedClientsFunc();
 
     // Load the Visualization API and the piechart package.
     google.load('visualization', '1.1', {'packages':['corechart']});
