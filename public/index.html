@@ -116,7 +116,7 @@
         socket.emit('today', function (data) {
             $('#counterToday').text(data + ' kWh (' + (Math.floor(0.2329*data * 100) / 100) + '€)');
             $('#counterTodayAverage').text((Math.floor((data / (parseInt((new XDate()).toString("H")) + 1)) * 100) / 100) + ' kW pro Stunde');
-            $('#counterTodayCost').text('Heute voraussichtlich ' + (Math.floor(((Math.floor(0.2329*data * 100) / 100) / ((new XDate()).toString("H") + 1)) * 100 * 24) / 100) + '€ Kosten');
+            $('#counterTodayCost').text('Heute voraussichtlich ' + (Math.floor(((data / ((new XDate()).toString("H") + 1)) * 24) * 0.2329 * 100) / 100) + '€ Kosten');
         });
 
         setTimeout(todayFunc, 5000);
