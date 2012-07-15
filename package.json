@@ -1,16 +1,21 @@
 {
-    "name": "easymeter",
-    "version": "0.0.1",
+    "name"        : "easymeter",
+    "version"     : "0.0.1",
     "dependencies": {
-        "express": "2.5.x",
-        "ejs": "*",
-        "mongoose": "*",
-        "async": "*",
-        "serialport": "*",
-        "socket.io": "*",
-        "xdate": "*"
+        "express"           : "2.5.x",
+        "mongoose"          : "*",
+        "session-mongoose"  : "*",
+        "async"             : "*",
+        "serialport"        : "*",
+        "socket.io"         : "*",
+        "xdate"             : "*",
+        "findit"            : "*",
+        "less-middleware"   : "*",
+        "express-hogan.js"  : "*",
+        "hogan.js"          : "*",
+        "node-dyndns-client": "*"
     },
-    "engines": {
+    "engines"     : {
         "node": "0.8.x"
     }
 }

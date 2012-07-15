@@ -1,0 +1,34 @@
+<div class="row">
+    <div class="span8">
+        <h3>DHCP settings</h3>
+    </div>
+    <div class="span8">
+        <form class="form-horizontal">
+            <fieldset>
+                <legend>Interface configuration</legend>
+                <div class="control-group">
+                    <label class="control-label">Checkboxes</label>
+
+                    <div class="controls">
+                        {{#interfaces}}
+                        <label class="checkbox">
+                            <input type="checkbox" name="optionsCheckboxList1" value="option1">
+                            Option one is this and that—be sure to include why it's great
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" name="optionsCheckboxList2" value="option2">
+                            Option two can also be checked and included in form results
+                        </label>
+                        <label class="checkbox">
+                            <input type="checkbox" name="optionsCheckboxList3" value="option3">
+                            Option three can—yes, you guessed it—also be checked and included in form results
+                        </label>
+                        {{/interfaces}}
+                        <p class="help-block"><strong>Note:</strong> Labels surround all the options for much larger
+                            click areas and a more usable form.</p>
+                    </div>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>

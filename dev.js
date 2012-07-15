@@ -1,61 +1,23 @@
-var mongoose = require('mongoose'),
-    xDate = require('xdate');
+var DHCP = require('./lib/dhcp');
 
-mongoose.connect('mongodb://easymeter:XSbOXfNH@ds033457.mongolab.com:33457/easymeter', function(err) {
-    if (err) throw err;
-});
+var ndns = require('./lib/ndns');
+var server = ndns.createServer('udp4');
+var client = ndns.createClient('udp4');
 
-var counter = new mongoose.Schema({
-    counter : Number,
-    type    : { type: String, enum: ['summary', 'moment', 'invalid'] }
-});
+var LOCAL_PORT = 53;
+var REMOTE_HOST = "8.8.8.8"
+var REMOTE_PORT = 53;
 
-var Counter = mongoose.model('Counter', counter);
-
-function map () {
-    var date = new xDate(this.id.getTimestamp()),
-        hour = date.toString('dd.MM.yyyy HH'),
-        stats = {};
-
-    stats[hour] = this.counter;
-    emit(this.type, stats);
-}
-
-function reduce(key, values) {
-    var out = {};
-    function merge(a, b) {
-        for (var k in b) {
-            if (!b.hasOwnProperty(k)) {
-                continue;
-            }
-            a[k] = (a[k] || 0) + b[k];
-        }
-    }
-    for (var i=0; i < values.length; i++) {
-        merge(out, values[i]);
-    }
-    return out;
-}
-
-// $lt: Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).addDays(1).getTime()/1000).toString(16) + "0000000000000000"
-
-Counter.findOne({
-    type: 'summary',
-    _id: {
-        $gt: Math.floor((new xDate()).setHours(0).setMinutes(0).setSeconds(0).setDate(1).getTime()/1000).toString(16) + "0000000000000000"
-    }
-}).limit(1).exec(function (err, docs) {
-        if (err) return;
-
-        Counter.findOne({
-            type: 'summary',
-            _id: {
-                $lt: Math.floor((new xDate()).setHours(23).setMinutes(59).setSeconds(59).setDate(xDate.getDaysInMonth((new xDate()).getFullYear(), (new xDate()).getMonth())).getTime()/1000).toString(16) + "0000000000000000"
-            }
-        }).sort('_id', -1).limit(1).exec(function (err, last) {
-                console.log((new xDate()).setHours(23).setMinutes(59).setSeconds(59).setDate(xDate.getDaysInMonth((new xDate()).getFullYear(), (new xDate()).getMonth())));
-                if (err) return;
-
-                console.log(Math.floor((last.get('counter') - docs.get('counter')) * 100) / 100);
-            });
+server.on("request", function ( req, res ) {
+    console.log(req);
+    var c_req = client.request(REMOTE_PORT, REMOTE_HOST);
+    c_req.on("response", function ( c_res ) {
+        res.send(c_res);
     });
+    c_req.send(req);
+});
+
+server.bind(LOCAL_PORT);
+//client.bind();
+
+var dhcp = new DHCP();
